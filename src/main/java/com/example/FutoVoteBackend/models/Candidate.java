@@ -3,6 +3,7 @@ package com.example.FutoVoteBackend.models;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,10 +14,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Candidate
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
 	@JsonProperty
@@ -26,8 +28,21 @@ public class Candidate
 	private String lastName;
 
 	@JsonProperty
-	private String Description;
+	private String level;
 
 	@JsonProperty
-	private Integer numOfVotes;
+	@OneToOne
+	@JoinColumn(name = "position_id", nullable = false)
+	private Position position;
+
+	@JsonProperty
+	private String photo ;
+
+	@JsonProperty
+	private String manifesto;
+
+	@JsonProperty
+	@Column(name="num_of_votes")
+	private String numOfVotes;
+
 }

@@ -1,18 +1,38 @@
 spring:
   jpa:
-    database: POSTGRESQL
+    database: MySQL
     show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/votedb
-    username: postgres
-    password: postgres
-    driverClassName: org.postgresql.Driver
+    url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DB_NAME}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+    driverClassName: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      platform: postgres
+      platform: mysql
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl:
+       trust: smtp.gmail.com
+       enable: true
+    default-encoding: UTF-8
 
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+server:
+    port:
+      9090
+mail-service:
+  from: ${EMAIL_USERNAME}
+
+
+
+
+

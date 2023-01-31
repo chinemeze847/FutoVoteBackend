@@ -2,9 +2,8 @@ package com.example.FutoVoteBackend.models;
 
 import javax.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,21 +15,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Student
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@JsonProperty
-	String firstName;
+	private String firstName;
 
 	@JsonProperty
-	String lastName;
+	private String lastName;
+
 
 	@JsonProperty
-	String matricNo;
+	private String matricNo;
 
 	@JsonProperty
-	String password;
+	private String email;
+
+	@Column(name = "is_enabled")
+	private Boolean isEnabled = false;
+
+	@Column(name = "is_locked")
+	private Boolean isLocked = false;
 
 	@JsonProperty
-	Boolean hasVoted;
+	private Boolean hasVoted = false;
+
 }
