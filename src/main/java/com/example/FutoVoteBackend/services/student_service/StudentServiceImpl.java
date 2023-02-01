@@ -3,6 +3,7 @@ package com.example.FutoVoteBackend.services.student_service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -14,15 +15,18 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.FutoVoteBackend.auth.UserRole;
 import com.example.FutoVoteBackend.dto.Mail;
 import com.example.FutoVoteBackend.dto.StudentLoginDto;
 import com.example.FutoVoteBackend.dto.StudentRequestDto;
 import com.example.FutoVoteBackend.exception.EmailConfirmedException;
 import com.example.FutoVoteBackend.exception.StudentNotFoundException;
 import com.example.FutoVoteBackend.models.Candidate;
+import com.example.FutoVoteBackend.models.Role;
 import com.example.FutoVoteBackend.models.Student;
 import com.example.FutoVoteBackend.models.token.ConfirmationToken;
 import com.example.FutoVoteBackend.repositories.CandidateRepository;
@@ -43,18 +47,20 @@ public class StudentServiceImpl implements StudentService {
 
 	ConfirmationTokenService confirmationTokenService;
 
+	private PasswordEncoder passwordEncoder;
 	@Value("${mail-service.from}")
 	private String emailFrom;
 
 
 	public StudentServiceImpl(StudentRepository studentRepository,
 			CandidateRepository candidateRepository, MailService mailService,
-			ConfirmationTokenService confirmationTokenService)
+			ConfirmationTokenService confirmationTokenService, PasswordEncoder passwordEncoder)
 	{
 		this.studentRepository = studentRepository;
 		this.candidateRepository = candidateRepository;
 		this.mailService = mailService;
 		this.confirmationTokenService = confirmationTokenService;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 
@@ -65,8 +71,17 @@ public class StudentServiceImpl implements StudentService {
 		student.setLastName((request.getLastName()));
 		student.setMatricNo(request.getMatricNo());
 		student.setEmail(request.getEmail());
+		student.setPassword(request.getPassword());
 
 		try {
+			String password = student.getPassword();
+			student.setPassword(passwordEncoder.encode(password));
+
+			//student is assigned USER role by default on Sign uUp
+			Role role = new Role();
+			role.setRole(UserRole.STUDENT);
+			student.setRoles(Set.of(role));
+
 			//Generating Token
 			String token = UUID.randomUUID().toString();
 			ConfirmationToken confirmationToken = new ConfirmationToken(

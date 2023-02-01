@@ -31,7 +31,8 @@ server:
       9090
 mail-service:
   from: ${EMAIL_USERNAME}
-
+secret:
+  key: 8HHUNJRR848HON48848
 
 
 

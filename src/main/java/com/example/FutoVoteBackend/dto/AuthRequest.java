@@ -2,17 +2,18 @@ package com.example.FutoVoteBackend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @AllArgsConstructor
-public class StudentRequestDto {
-	private String firstName;
-
-	private String lastName;
-
+@NoArgsConstructor
+public class AuthRequest
+{
+	@JsonProperty
 	private String matricNo;
 
-	private String email;
-
+	@JsonProperty
 	private String password;
 }

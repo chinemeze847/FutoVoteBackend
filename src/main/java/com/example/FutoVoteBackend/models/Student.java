@@ -1,10 +1,12 @@
 package com.example.FutoVoteBackend.models;
 
+import java.util.Set;
+
 import javax.persistence.*;
 
 import lombok.*;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -16,7 +18,7 @@ public class Student
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private int id;
 
 	@JsonProperty
 	private String firstName;
@@ -26,10 +28,15 @@ public class Student
 
 
 	@JsonProperty
+	@Column(name = "username", unique = true)
 	private String matricNo;
 
 	@JsonProperty
 	private String email;
+
+	@JsonProperty
+	private String password;
+
 
 	@Column(name = "is_enabled")
 	private Boolean isEnabled = false;
@@ -39,5 +46,10 @@ public class Student
 
 	@JsonProperty
 	private Boolean hasVoted = false;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JsonIgnore
+	private Set<Role> roles;
 
 }

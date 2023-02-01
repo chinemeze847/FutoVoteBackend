@@ -12,10 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.FutoVoteBackend.dto.StudentLoginDto;
-import com.example.FutoVoteBackend.dto.StudentRequestDto;
-import com.example.FutoVoteBackend.dto.VoteRequestDto;
+import com.example.FutoVoteBackend.dto.*;
 import com.example.FutoVoteBackend.models.Student;
+import com.example.FutoVoteBackend.services.auth_service.AuthService;
 import com.example.FutoVoteBackend.services.student_service.StudentService;
 
 @RestController
@@ -26,12 +25,15 @@ public class StudentController {
 
 	StudentService studentService;
 
+	AuthService authService;
+
 	@Autowired
-	public StudentController(StudentService studentService) {
+	public StudentController(StudentService studentService, AuthService authService) {
 		this.studentService = studentService;
+		this.authService = authService;
 	}
 
-	@PostMapping("/register")
+	@PostMapping("/auth/register")
 	public ResponseEntity<?> createPost(@RequestBody StudentRequestDto request) throws MessagingException {
 		return new ResponseEntity<>(studentService.createStudent(request), HttpStatus.CREATED);
 	}
@@ -41,14 +43,10 @@ public class StudentController {
 		return ResponseEntity.ok(students);
 	}
 
-	@PostMapping("/login")
-	public String loginStudent(@RequestBody StudentLoginDto request){
-		Optional<Student> student = studentService.findStudent(request);
-
-		if(student.get() != null)
-			return "Successful Login";
-
-		return "Student Not Found";
+	@PostMapping("/auth/authenticate")
+	public ResponseEntity<AuthResponse> loginUser(@RequestBody AuthRequest authRequest){
+		AuthResponse authRespsonse = authService.authenticateUser(authRequest);
+		return ResponseEntity.ok(authRespsonse);
 	}
 
 	public String vote(@RequestBody VoteRequestDto request)
