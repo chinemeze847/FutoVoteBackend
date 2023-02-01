@@ -29,16 +29,15 @@ public class AuthServiceImpl implements AuthService
 	{
 		log.info("Authenticate User with Credentials {}", request);
 
-		StudentUserDetails student = (StudentUserDetails) studentUserDetailsService.loadUserByUsername(request.getMatricNo());
 
-		log.info("student Username :  {}", student.getUsername());
-		log.info("student password :  {}", student.getPassword());
+		log.info("student Username :  {}", request.getMatricNo());
+		log.info("student password :  {}", request.getPassword());
 
 		String jwtToken = null;
 		UsernamePasswordAuthenticationToken userToken =
 				new UsernamePasswordAuthenticationToken(
-						student.getUsername(),
-						student.getPassword());
+						request.getMatricNo(),
+						request.getPassword());
 
 		log.info("user token  : {} ", userToken);
 		try {
